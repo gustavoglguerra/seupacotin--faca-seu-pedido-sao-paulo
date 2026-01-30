@@ -48,6 +48,27 @@
     background: #f0f0f0;
   }
 }
+#whatsappBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #25d366;
+  color: white;
+  font-size: 26px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 999;
+}
+
+#whatsappBtn:hover {
+  background: #1ebe5d;
+}
 
 <style>
 body {
@@ -192,6 +213,30 @@ function calcular() {
       row.cells[3].innerText = "-";
       row.cells[4].innerText = "-";
       return;
+     // ===== WHATSAPP =====
+let mensagem = "📦 *Pedido de Envelopes*%0A%0A";
+let temPedido = false;
+
+[...tbody.rows].forEach((row,i)=>{
+  const qtd = Number(row.cells[1].children[0].value);
+  if(qtd > 0){
+    temPedido = true;
+    mensagem += `• ${produtos[i][0]} — ${qtd} mil → ${row.cells[3].innerText}%0A`;
+  }
+});
+
+mensagem += `%0A💰 *Total:* ${document.getElementById("totalValor").innerText}`;
+mensagem += `%0A⚖️ *Peso:* ${document.getElementById("totalPeso").innerText}`;
+
+const whatsappBtn = document.getElementById("whatsappBtn");
+
+if(temPedido){
+  whatsappBtn.style.display = "flex";
+  whatsappBtn.href = "https://wa.me/5531990728646?text=" + mensagem;
+} else {
+  whatsappBtn.style.display = "none";
+}
+ 
     }
 
     const p = produtos[i];
@@ -212,6 +257,8 @@ function calcular() {
   document.getElementById("totalPeso").innerText = totalPeso.toFixed(2)+" kg";
 }
 </script>
+<!-- Botão WhatsApp -->
+<a id="whatsappBtn" href="#" target="_blank">📲</a>
 
 </body>
 </html>
