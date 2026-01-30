@@ -3,6 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <title>Simulador de Pedido</title>
+/* ===== VERSÃO MOBILE ===== */
+@media (max-width: 768px) {
+
+  body {
+    padding: 10px;
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  td {
+    border: none;
+    text-align: left;
+    padding: 6px 0;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 2px;
+    color: #555;
+  }
+
+  input[type="number"] {
+    width: 100%;
+  }
+
+  tfoot tr {
+    background: #f0f0f0;
+  }
+}
 
 <style>
 body {
@@ -126,12 +171,14 @@ const tbody = document.querySelector("#calcTable tbody");
 produtos.forEach((p,i)=>{
   const row = tbody.insertRow();
   row.innerHTML = `
-    <td>${p[0]}</td>
-    <td><input type="number" min="0" oninput="calcular()"></td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-  `;
+  <td data-label="Tamanho">${p[0]}</td>
+  <td data-label="Quantidade (mil)">
+    <input type="number" min="0" oninput="calcular()">
+  </td>
+  <td data-label="Preço unitário">-</td>
+  <td data-label="Valor total">-</td>
+  <td data-label="Peso total">-</td>
+`;
 });
 
 function calcular() {
