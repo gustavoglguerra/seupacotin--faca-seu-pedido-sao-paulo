@@ -1,136 +1,124 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Simulador de Pedido</title>
+<meta charset="UTF-8">
+<title>Simulador de Pedido</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      padding: 30px;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  padding: 30px;
+}
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+h1 {
+  text-align: center;
+}
 
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  margin-bottom: 40px;
+}
 
-    h2 {
-      margin-top: 30px;
-    }
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      font-size: 14px;
-    }
+th {
+  background: #f0f0f0;
+}
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: center;
-    }
+input[type="number"] {
+  width: 80px;
+  padding: 4px;
+}
 
-    th {
-      background-color: #f4f4f4;
-    }
-
-    .calc {
-      margin-top: 30px;
-      background: #f9f9f9;
-      padding: 20px;
-      border-radius: 6px;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-
-    select, input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px;
-      width: 100%;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-
-    .resultado {
-      margin-top: 20px;
-      background: #e9ecef;
-      padding: 15px;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-  </style>
+.total {
+  font-weight: bold;
+  background: #f9fafb;
+}
+</style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>Simulador de Pedido</h1>
+<h1>Simulador de Pedido</h1>
 
-  <h2>Tabela de Preços (R$/milheiro)</h2>
+<h2>Tabela de Preços (R$/milheiro)</h2>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Tamanho</th>
-        <th>Até 10 mil</th>
-        <th>Até 20 mil</th>
-        <th>Acima 50 mil</th>
-        <th>Peso (kg/mil)</th>
-      </tr>
-    </thead>
-    <tbody id="tabelaPrecos"></tbody>
-  </table>
+<table>
+<tr>
+<th>Tamanho</th>
+<th>Até 10 mil</th>
+<th>Até 20 mil</th>
+<th>Acima 50 mil</th>
+<th>Peso (kg/mil)</th>
+</tr>
 
-  <div class="calc">
-    <h2>Calcular Pedido</h2>
+<tr><td>12x18 + 3ABA</td><td>31.59</td><td>29.49</td><td>27.64</td><td>1.7</td></tr>
+<tr><td>15x25 + 3ABA</td><td>53.66</td><td>50.08</td><td>46.95</td><td>3</td></tr>
+<tr><td>19x25 + 3ABA</td><td>67.98</td><td>63.45</td><td>59.48</td><td>3.4</td></tr>
+<tr><td>20x30 + 3ABA</td><td>85.06</td><td>79.39</td><td>74.43</td><td>4.5</td></tr>
+<tr><td>22x40 + 3ABA</td><td>123.26</td><td>115.04</td><td>107.85</td><td>6.8</td></tr>
 
-    <label>Tamanho</label>
-    <select id="tamanho">
-      <option value="">Selecione</option>
-    </select>
+<!-- Depois adicionamos os outros 12 aqui -->
+</table>
 
-    <label>Quantidade (milheiros)</label>
-    <input type="number" id="quantidade" min="1" placeholder="Ex: 10">
+<h2>Calcular Pedido</h2>
 
-    <button onclick="calcular()">Calcular</button>
+<table id="calcTable">
+<tr>
+<th>Tamanho</th>
+<th>Qtd (mil)</th>
+<th>Preço unit.</th>
+<th>Valor total</th>
+<th>Peso total</th>
+</tr>
+</table>
 
-    <div class="resultado">
-      <p><strong>Valor total:</strong> <span id="valor">-</span></p>
-      <p><strong>Peso total:</strong> <span id="peso">-</span></p>
-    </div>
-  </div>
-</div>
+<script>
+const produtos = [
+  { nome: "12x18 + 3ABA", p10: 31.59, p20: 29.49, p50: 27.64, peso: 1.7 },
+  { nome: "15x25 + 3ABA", p10: 53.66, p20: 50.08, p50: 46.95, peso: 3 },
+  { nome: "19x25 + 3ABA", p10: 67.98, p20: 63.45, p50: 59.48, peso: 3.4 },
+  { nome: "20x30 + 3ABA", p10: 85.06, p20: 79.39, p50: 74.43, peso: 4.5 },
+  { nome: "22x40 + 3ABA", p10: 123.26, p20: 115.04, p50: 107.85, peso: 6.8 }
+];
 
-<script src="script.js"></script>
+const tabela = document.getElementById("calcTable");
+
+produtos.forEach((p, i) => {
+  const row = tabela.insertRow();
+  row.innerHTML = `
+    <td>${p.nome}</td>
+    <td><input type="number" min="0" oninput="calcular(${i}, this.value)"></td>
+    <td id="preco${i}">-</td>
+    <td id="valor${i}">-</td>
+    <td id="peso${i}">-</td>
+  `;
+});
+
+function calcular(i, qtd) {
+  qtd = Number(qtd);
+  if (!qtd) {
+    document.getElementById("preco"+i).innerText = "-";
+    document.getElementById("valor"+i).innerText = "-";
+    document.getElementById("peso"+i).innerText = "-";
+    return;
+  }
+
+  const p = produtos[i];
+  let preco = qtd <= 10 ? p.p10 : qtd <= 20 ? p.p20 : p.p50;
+
+  document.getElementById("preco"+i).innerText = "R$ " + preco.toFixed(2);
+  document.getElementById("valor"+i).innerText = "R$ " + (preco * qtd).toFixed(2);
+  document.getElementById("peso"+i).innerText = (p.peso * qtd).toFixed(2) + " kg";
+}
+</script>
+
 </body>
 </html>
