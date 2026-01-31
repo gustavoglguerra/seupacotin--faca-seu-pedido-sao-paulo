@@ -131,10 +131,8 @@ tfoot td {
 <tr><td>25x35 + 3ABA</td><td>101.90</td><td>7.2</td></tr>
 <tr><td>26x36 + 3ABA</td><td>105.90</td><td>7.4</td></tr>
 <tr><td>25x45 + 3ABA</td><td>133.90</td><td>8.2</td></tr>
-<tr><td>28x45 + 3ABA</td><td>149.90</td><td>9.2</td></tr>
 <tr><td>30x40 + 3ABA</td><td>143.90</td><td>8.8</td></tr>
 <tr><td>32x40 + 3ABA</td><td>152.90</td><td>10.6</td></tr>
-<tr><td>36x45 + 3ABA</td><td>192.90</td><td>12.3</td></tr>
 <tr><td>35x50 + 3ABA</td><td>207.90</td><td>11.8</td></tr>
 <tr><td>40x50 + 3ABA</td><td>237.90</td><td>14.0</td></tr>
 <tr><td>40x60 + 3ABA</td><td>283.90</td><td>16.9</td></tr>
@@ -165,23 +163,20 @@ tfoot td {
 
 <script>
 const produtos = [
-["12x18 + 3ABA",31.59,29.49,27.64,1.7],
-["15x25 + 3ABA",53.66,50.08,46.95,3.0],
-["19x25 + 3ABA",67.98,63.45,59.48,3.4],
-["20x30 + 3ABA",85.06,79.39,74.43,4.5],
-["22x40 + 3ABA",123.26,115.04,107.85,6.8],
-["25x35 + 3ABA",123.19,114.97,107.79,7.2],
-["26x36 + 3ABA",131.63,122.85,115.18,7.4],
-["25x45 + 3ABA",156.96,146.49,137.34,8.2],
-["30x40 + 3ABA",168.14,156.93,147.13,8.8],
-["28x45 + 3ABA",175.79,164.07,153.81,9.2],
-["32x40 + 3ABA",179.29,167.33,156.88,10.6],
-["40x40 + 3ABA",224.13,209.19,196.11,15.9],
-["36x45 + 3ABA",225.99,210.92,197.74,12.3],
-["35x50 + 3ABA",243.37,227.14,212.95,11.8],
-["40x50 + 3ABA",278.14,259.60,243.38,20.0],
-["40x60 + 3ABA",332.14,310.00,290.62,16.9],
-["50x60 + 3ABA",415.18,387.50,363.28,23.2]
+["12x18 + 3ABA",27.90,1.7],
+["15x25 + 3ABA",46.90,3.0],
+["19x25 + 3ABA",59.90,3.4],
+["20x30 + 3ABA",74.90,4.5],
+["22x40 + 3ABA",105.90,6.8],
+["25x35 + 3ABA",101.90,7.2],
+["26x36 + 3ABA",105.90,7,4],
+["25x45 + 3ABA",133.90,8.2],
+["30x40 + 3ABA",143.90,8.8],
+["32x40 + 3ABA",152.90,10.6],
+["35x50 + 3ABA",207.90,11.8],
+["40x50 + 3ABA",237.90,14.0],
+["40x60 + 3ABA",283.90,16.90],
+["50x60 + 3ABA",354.90,21.90]
 ];
 
 const tbody = document.querySelector("#calcTable tbody");
@@ -211,47 +206,63 @@ function calcular() {
       row.cells[4].innerText = "-";
       return;
      // ===== WHATSAPP =====
-let mensagem = "📦 *Pedido de Envelopes*%0A%0A";
+function calcular() {
+  let totalValor = 0;
+  let totalPeso = 0;
+
+  [...tbody.rows].forEach((row,i)=>{
+    const qtd = Number(row.cells[1].children[0].value);
+    if(!qtd){
+      row.cells[2].innerText = "-";
+      row.cells[3].innerText = "-";
+      row.cells[4].innerText = "-";
+      return;
+    }
+
+    const p = produtos[i];
+    const preco = p[1];
+    const valor = preco * qtd;
+    const peso = p[2] * qtd;
+
+    row.cells[2].innerText = "R$ " + preco.toFixed(2);
+    row.cells[3].innerText = "R$ " + valor.toFixed(2);
+    row.cells[4].innerText = peso.toFixed(2) + " kg";
+
+    totalValor += valor;
+    totalPeso += peso;
+  });
+
+  document.getElementById("totalValor").innerText =
+    "R$ " + totalValor.toFixed(2);
+  document.getElementById("totalPeso").innerText =
+    totalPeso.toFixed(2) + " kg";
+
+  // // ===== WHATSAPP NOVO =====
+const whatsappBtn = document.getElementById("whatsappBtn");
+
+let mensagem = "PEDIDO DE ENVELOPES\n\n";
 let temPedido = false;
 
 [...tbody.rows].forEach((row,i)=>{
   const qtd = Number(row.cells[1].children[0].value);
   if(qtd > 0){
     temPedido = true;
-    mensagem += `• ${produtos[i][0]} — ${qtd} mil → ${row.cells[3].innerText}%0A`;
+    mensagem += `${produtos[i][0]} - ${qtd} mil - ${row.cells[3].innerText}\n`;
   }
 });
 
-mensagem += `%0A💰 *Total:* ${document.getElementById("totalValor").innerText}`;
-mensagem += `%0A⚖️ *Peso:* ${document.getElementById("totalPeso").innerText}`;
-
-const whatsappBtn = document.getElementById("whatsappBtn");
+mensagem += `\nTOTAL: ${document.getElementById("totalValor").innerText}`;
+mensagem += `\nPESO: ${document.getElementById("totalPeso").innerText}`;
 
 if(temPedido){
   whatsappBtn.style.display = "flex";
-  whatsappBtn.href = "https://wa.me/5531990728646?text=" + mensagem;
+  whatsappBtn.href =
+    "https://api.whatsapp.com/send?phone=5531990728646&text=" +
+    encodeURIComponent(mensagem);
 } else {
   whatsappBtn.style.display = "none";
 }
- 
-    }
 
-    const p = produtos[i];
-    const preco = qtd<=10 ? p[1] : qtd<=20 ? p[2] : p[3];
-
-    const valor = preco*qtd;
-    const peso = p[4]*qtd;
-
-    row.cells[2].innerText = "R$ "+preco.toFixed(2);
-    row.cells[3].innerText = "R$ "+valor.toFixed(2);
-    row.cells[4].innerText = peso.toFixed(2)+" kg";
-
-    totalValor += valor;
-    totalPeso += peso;
-  });
-
-  document.getElementById("totalValor").innerText = "R$ "+totalValor.toFixed(2);
-  document.getElementById("totalPeso").innerText = totalPeso.toFixed(2)+" kg";
 }
 </script>
 <!-- Botão WhatsApp -->
